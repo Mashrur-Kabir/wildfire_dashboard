@@ -27,34 +27,28 @@ filtered_df = df[(df["Region"] == selected_region) & (df["Year"] == selected_yea
 st.subheader(f"📊 Wildfire Insights for {selected_region} - {selected_year}")
 
 # --- Chart Section ---
-if st.session_state.get('screen_width', 1000) >= 992:
-    col1, col2 = st.columns(2)
-else:
-    col1 = st.container()
-    col2 = st.container()
-
-# --- Pie Chart ---
-with col1:
-    st.markdown("### 🔥 Avg. Fire Area (Monthly)")
-    pie_data = filtered_df.set_index("Month")["Avg_Fire_Area_km2"]
-    fig1, ax1 = plt.subplots(figsize=(4, 4))
-    wedges, texts, autotexts = ax1.pie(
-        pie_data, autopct='%1.1f%%', startangle=90, radius=1, labels=None
-    )
-    ax1.axis("equal")
-
-    # Legend on the right
-    ax1.legend(wedges, pie_data.index, title="Month", loc="center left", bbox_to_anchor=(1, 0.5))
-
-    st.pyplot(fig1)
+st.markdown("### 🔥 Avg. Fire Area (Monthly)")
+pie_data = filtered_df.set_index("Month")["Avg_Fire_Area_km2"]
+fig1, ax1 = plt.subplots(figsize=(6, 6))  # Made pie chart larger
+wedges, texts, autotexts = ax1.pie(
+    pie_data,
+    autopct='%1.1f%%',
+    startangle=90,
+    radius=1.2,  # slightly larger radius
+    textprops={'fontsize': 8},
+    labels=None
+)
+ax1.axis("equal")
+ax1.legend(wedges, pie_data.index, title="Month", loc="center left", bbox_to_anchor=(1, 0.5))
+st.pyplot(fig1)
 
 # --- Bar Chart ---
-with col2:
-    st.markdown("### 🌿 Avg. Vegetation Pixel Count (Monthly)")
-    bar_data = filtered_df.set_index("Month")["Avg_Veg_Pixel_Count"]
-    fig2, ax2 = plt.subplots(figsize=(5, 3))
-    bar_data.plot(kind="bar", ax=ax2, color="seagreen")
-    ax2.set_ylabel("Pixel Count")
-    ax2.set_xlabel("Month")
-    ax2.tick_params(axis='x', rotation=45)
-    st.pyplot(fig2)
+st.markdown("### 🌿 Avg. Vegetation Pixel Count (Monthly)")
+bar_data = filtered_df.set_index("Month")["Avg_Veg_Pixel_Count"]
+fig2, ax2 = plt.subplots(figsize=(8, 3.5))  # wider layout for bar chart
+bar_data.plot(kind="bar", ax=ax2, color="seagreen")
+ax2.set_ylabel("Pixel Count")
+ax2.set_xlabel("Month")
+ax2.tick_params(axis='x', rotation=45)
+st.pyplot(fig2)
+
