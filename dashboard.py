@@ -2,28 +2,31 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Deploy link: https://wildfiredashboard-gqhtbbcmrbwnsdtnd8k9so.streamlit.app/
-
 # --- Page Setup ---
 st.set_page_config(page_title="Australia Wildfire Dashboard", layout="wide")
 
 # --- Title ---
-st.title("Australia Wildfire Dashboard (2025)")
+st.title("Australia Wildfire Dashboard (2020–2025)")
 
 # --- Load Data ---
-DATA_FILE = "australia_wildfire_2025.xlsx"
+DATA_FILE = "australia_wildfire_2020_2025.xlsx"
 df = pd.read_excel(DATA_FILE)
 
-# --- Region Selection ---
+# --- Region and Year Selection ---
 regions = sorted(df["Region"].unique())
-selected_region = st.selectbox("🌏 Select a Region", regions)
+years = sorted(df["Year"].unique())
 
-filtered_df = df[df["Region"] == selected_region]
+col_a, col_b = st.columns([2, 1])
+with col_a:
+    selected_region = st.selectbox("🌏 Select a Region", regions)
+with col_b:
+    selected_year = st.selectbox("📅 Select a Year", years)
 
-st.subheader(f"📊 Wildfire Insights for {selected_region} (2025)")
+filtered_df = df[(df["Region"] == selected_region) & (df["Year"] == selected_year)]
+
+st.subheader(f"📊 Wildfire Insights for {selected_region} - {selected_year}")
 
 # --- Chart Section ---
-# Use st.columns for responsiveness
 if st.session_state.get('screen_width', 1000) >= 992:
     col1, col2 = st.columns(2)
 else:
@@ -34,29 +37,14 @@ else:
 with col1:
     st.markdown("### 🔥 Avg. Fire Area (Monthly)")
     pie_data = filtered_df.set_index("Month")["Avg_Fire_Area_km2"]
-
     fig1, ax1 = plt.subplots(figsize=(4, 4))
-    colors = plt.cm.tab20.colors[:len(pie_data)]  # Get distinct colors
-
-    # plot pie chart percentages 
     wedges, texts, autotexts = ax1.pie(
-        pie_data,
-        colors=colors,
-        startangle=90,
-        autopct='%1.1f%%',
-        textprops=dict(color="white", fontsize=8)
+        pie_data, autopct='%1.1f%%', startangle=90, radius=1, labels=None
     )
     ax1.axis("equal")
 
-    # month names and associated color boxes
-    ax1.legend(
-        wedges,
-        pie_data.index,
-        title="Month",
-        loc="center left",
-        bbox_to_anchor=(1, 0.5),
-        fontsize='small'
-    )
+    # Legend on the right
+    ax1.legend(wedges, pie_data.index, title="Month", loc="center left", bbox_to_anchor=(1, 0.5))
 
     st.pyplot(fig1)
 
