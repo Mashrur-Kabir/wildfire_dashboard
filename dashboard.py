@@ -11,7 +11,7 @@ st.set_page_config(page_title="Australia Wildfire Dashboard", layout="wide")
 st.title("Australia Wildfire Dashboard (2025)")
 
 # --- Load Data ---
-DATA_FILE = "australia_wildfire_2025.xlsx"
+DATA_FILE = "australia_wildfire_2020_2025.xlsx"
 df = pd.read_excel(DATA_FILE)
 
 # --- Region Selection ---
